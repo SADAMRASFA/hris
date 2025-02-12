@@ -33,7 +33,7 @@
         </li><!-- End  Nav -->
 
             <li class="nav-item">
-            <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/pelatihan/index.php">
+            <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/penggajian/index.php">
                 <i class="bi bi-box-seam-fill"></i><span>Pelatihan</span>
             </a>
         </li>
@@ -48,9 +48,10 @@
             </i><span>Recruitment</span>
         </a>
         <li class="nav-item">
-        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/kontrak_pegawai/index.php">
-            <i class="bi bi-briefcase"></i><span>Manajemen Kontrak Pegawai</span>
-        </a>
+            <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/manajemen_cuti/index.php">
+            <i class="bi bi-cash-stack"></i><span>Manajemen Cuti</span>
+            </a>   
+        </li>
         
         <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/slip_gaji/index.php">
