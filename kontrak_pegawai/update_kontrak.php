@@ -1,36 +1,38 @@
 <?php
 include '../connection.php';
 
-// Check if form is submitted
+// Periksa apakah metode permintaan adalah POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Sanitize and validate input
+    // Ambil dan sanitasi input
     $id = intval($_POST['id']);
-    $id_pegawai = intval($_POST['id_pegawai']);
-    $tanggal_mulai_kontrak = $conn->real_escape_string($_POST['tanggal_mulai_kontrak']);
-    $tanggal_berakhir_kontrak = $conn->real_escape_string($_POST['tanggal_berakhir_kontrak']);
+    $pegawai_id = intval($_POST['pegawai_id']);
+    $nomor_kontrak = $conn->real_escape_string($_POST['nomor_kontrak']);
+    $tanggal_mulai = $conn->real_escape_string($_POST['tanggal_mulai']);
+    $tanggal_berakhir = $conn->real_escape_string($_POST['tanggal_berakhir']);
+    $jabatan = $conn->real_escape_string($_POST['jabatan']);
+    $gaji = floatval($_POST['gaji']);
     $status_kontrak = $conn->real_escape_string($_POST['status_kontrak']);
-    $gaji_bulanan = $conn->real_escape_string($_POST['gaji_bulanan']);
-    $tipe_kontrak = intval($_POST['tipe_kontrak']);
 
-    // Update query
-    $sql = "UPDATE `kontrak pegawai` SET 
-            `id_pegawai` = '$id_pegawai', 
-            `tanggal_mulai_kontrak` = '$tanggal_mulai_kontrak', 
-            `tanggal_berakhir_kontrak` = '$tanggal_berakhir_kontrak', 
-            `status_kontrak` = '$status_kontrak', 
-            `gaji_bulanan` = '$gaji_bulanan', 
-            `tipe_kontrak` = '$tipe_kontrak' 
-            WHERE `id_pegawai` = '$id'";
+    // Query update data
+    $sql = "UPDATE `kontrak_pegawai` SET 
+            `pegawai_id` = '$pegawai_id', 
+            `nomor_kontrak` = '$nomor_kontrak', 
+            `tanggal_mulai` = '$tanggal_mulai', 
+            `tanggal_berakhir` = '$tanggal_berakhir', 
+            `jabatan` = '$jabatan', 
+            `gaji` = '$gaji', 
+            `status_kontrak` = '$status_kontrak',
+            `updated_at` = CURRENT_TIMESTAMP 
+            WHERE `id` = '$id'";
 
     if ($conn->query($sql) === TRUE) {
-        // Redirect to index.php after successful update
-        echo "<script>alert('Contract updated successfully!'); window.location.href = '../index\.php';</script>";
+        echo "<script>alert('Kontrak berhasil diperbarui!'); window.location.href = '../index.php';</script>";
     } else {
-        echo "<script>alert('Error updating contract: " . $conn->error . "'); window.history.back();</script>";
+        echo "<script>alert('Gagal memperbarui kontrak: " . $conn->error . "'); window.history.back();</script>";
     }
 
     $conn->close();
 } else {
-    echo "<script>alert('Invalid request.'); window.history.back();</script>";
+    echo "<script>alert('Permintaan tidak valid.'); window.history.back();</script>";
 }
 ?>

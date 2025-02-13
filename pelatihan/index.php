@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 
 // Query untuk mengambil semua data pelatihan
-$query = "SELECT * FROM pelatihan ORDER BY id_pelatihan DESC";
+$query = "SELECT * FROM pelatihan ";
 $result = mysqli_query($conn, $query);
 
 // Cek apakah query berhasil

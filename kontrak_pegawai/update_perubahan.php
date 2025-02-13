@@ -4,19 +4,21 @@ include '../connection.php';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Retrieve and sanitize form data
     $id = intval($_POST['id']);
-    $id_kontrak = intval($_POST['id_kontrak']);
+    $kontrak_id = intval($_POST['kontrak_id']);
     $tanggal_perubahan = $conn->real_escape_string($_POST['tanggal_perubahan']);
-    $gaji_sebelum_perubahan = floatval($_POST['gaji_sebelum_perubahan']);
-    $gaji_setelah_perubahan = floatval($_POST['gaji_setelah_perubahan']);
-    $keterangan_perubahan = $conn->real_escape_string($_POST['keterangan_perubahan']);
+    $gaji_sebelum_perubahan = $conn->real_escape_string($_POST['gaji_sebelum_perubahan']); // VARCHAR, bukan FLOAT
+    $gaji_setelah_perubahan = $conn->real_escape_string($_POST['gaji_setelah_perubahan']); // VARCHAR, bukan FLOAT
+    $perubahan = $conn->real_escape_string($_POST['perubahan']); // Sesuai dengan database
+    $dibuat_oleh = $conn->real_escape_string($_POST['dibuat_oleh']);
 
     // Prepare and execute the update query
     $stmt = $conn->prepare("UPDATE `riwayat_perubahan_kontrak` SET 
-                            `id_kontrak` = ?, 
+                            `kontrak_id` = ?, 
                             `tanggal_perubahan` = ?, 
                             `gaji_sebelum_perubahan` = ?, 
                             `gaji_setelah_perubahan` = ?, 
-                            `keterangan_perubahan` = ? 
+                            `perubahan` = ?,
+                            `dibuat_oleh` = ?
                             WHERE `id` = ?");
     
     if ($stmt === false) {
@@ -24,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Bind parameters
-    $stmt->bind_param("isddsi", $id_kontrak, $tanggal_perubahan, $gaji_sebelum_perubahan, $gaji_setelah_perubahan, $keterangan_perubahan, $id);
+    $stmt->bind_param("isssssi", $kontrak_id, $tanggal_perubahan, $gaji_sebelum_perubahan, $gaji_setelah_perubahan, $perubahan, $dibuat_oleh, $id);
 
     if ($stmt->execute()) {
         echo "<script>alert('Data berhasil diperbarui!'); window.location.href='index.php';</script>";

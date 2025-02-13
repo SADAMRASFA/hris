@@ -1,86 +1,84 @@
 <?php
+// Start output buffering
+ob_start();
 include '../template/header.php';
 include '../template/sidebar.php';
 include '../connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ambil data dari form
-    $dokumen_peg = intval($_POST['dokumen_peg']);
-    $kontrak_peg = intval($_POST['kontrak_peg']);
-    $jenis_dokumen = intval($_POST['jenis_dokumen']);
-    $tanggal_unggah = $_POST['tanggal_unggah'];
-    $nama_file = $_POST['nama_file'];
+    $kontrak_id = $_POST['kontrak_id'];
+    $perubahan = $_POST['perubahan'];
+    $dibuat_oleh = $_POST['dibuat_oleh'];
+    $gaji_sebelum = $_POST['gaji_sebelum'];
+    $gaji_setelah = $_POST['gaji_setelah'];
 
-    // Proses upload file
-    $uploadDir = 'uploads/';
-    $fileName = basename($_FILES['file_upload']['name']);
-    $filePath = $uploadDir . $fileName;
-    $fileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+    $stmt = $conn->prepare("INSERT INTO riwayat_perubahan_kontrak (kontrak_id, perubahan, dibuat_oleh, gaji_sebelum_perubahan, gaji_setelah_perubahan) VALUES (?, ?, ?, ?, ?)");
+    $stmt->bind_param("issss", $kontrak_id, $perubahan, $dibuat_oleh, $gaji_sebelum, $gaji_setelah);
 
-    // Validasi ekstensi file
-    $allowedTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx'];
-    if (!in_array($fileType, $allowedTypes)) {
-        die("<script>alert('Hanya file PDF, DOC, DOCX, XLS, XLSX yang diizinkan!'); history.back();</script>");
-    }
-
-    // Buat direktori jika belum ada
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0755, true);
-    }
-
-    // Upload file
-    if (move_uploaded_file($_FILES['file_upload']['tmp_name'], $filePath)) {
-        // Simpan ke database
-        $stmt = $conn->prepare("INSERT INTO `dokumen pendukung` 
-            (dokumen_peg, kontrak_peg, jenis_dokumen, tanggal_unggah, nama_file, lokasi_file) 
-            VALUES (?, ?, ?, ?, ?, ?)");
-        
-        $stmt->bind_param("iiisss", $dokumen_peg, $kontrak_peg, $jenis_dokumen, $tanggal_unggah, $nama_file, $filePath);
-        
-        if ($stmt->execute()) {
-            echo "<script>alert('Dokumen berhasil disimpan!'); window.location.href='index.php';</script>";
-        } else {
-            unlink($filePath); // Hapus file jika gagal simpan ke database
-            echo "<script>alert('Gagal menyimpan data: " . $stmt->error . "'); history.back();</script>";
-        }
-        $stmt->close();
+    if ($stmt->execute()) {
+        // Redirect sebelum output HTML
+        header("Location: submit_perubahan.php?message=success");
+        exit();
     } else {
-        echo "<script>alert('Gagal upload file!'); history.back();</script>";
+        $error_message = "<div class='alert alert-danger'>Terjadi kesalahan dalam menyimpan data.</div>";
     }
 }
+
+// Ambil data kontrak pegawai
+$kontrak_pegawai = $conn->query("SELECT id, nomor_kontrak, gaji FROM kontrak_pegawai WHERE status_kontrak = 'Aktif'")->fetch_all(MYSQLI_ASSOC);
+
+ob_end_flush(); // Stop output buffering
 ?>
 
 <main id="main" class="main">
+    <?php if (isset($_GET['message']) && $_GET['message'] == 'success'): ?>
+        <div class="alert alert-success animate__animated animate__fadeIn" role="alert">
+            Perubahan kontrak berhasil disimpan!
+        </div>
+    <?php endif; ?>
+
+    <?php if (isset($error_message)) echo $error_message; ?>
+
     <div class="container">
-        <h1>Tambah Dokumen Pendukung</h1>
-        <form method="post" action="" enctype="multipart/form-data">
+        <h1 class="animate__animated animate__fadeInDown">Tambah Perubahan Kontrak</h1>
+        <form method="POST" action="">
             <div class="mb-3">
-                <label for="dokumen_peg" class="form-label">Dokumen Pegawai</label>
-                <input type="number" class="form-control" id="dokumen_peg" name="dokumen_peg" required placeholder="Enter Dokumen Pegawai">
+                <label for="kontrak_id" class="form-label">Pilih Kontrak</label>
+                <select class="form-control" name="kontrak_id" id="kontrak_id" required>
+                    <option value="">-- Pilih Kontrak --</option>
+                    <?php foreach ($kontrak_pegawai as $kontrak): ?>
+                        <option value="<?= $kontrak['id'] ?>" data-gaji="<?= $kontrak['gaji'] ?>">
+                            <?= $kontrak['nomor_kontrak'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
             </div>
             <div class="mb-3">
-                <label for="kontrak_peg" class="form-label">Kontrak Pegawai</label>
-                <input type="number" class="form-control" id="kontrak_peg" name="kontrak_peg" required placeholder="Enter Kontrak Pegawai">
+                <label for="perubahan" class="form-label">Deskripsi Perubahan</label>
+                <textarea class="form-control" name="perubahan" id="perubahan" required></textarea>
             </div>
             <div class="mb-3">
-                <label for="jenis_dokumen" class="form-label">Jenis Dokumen</label>
-                <input type="number" class="form-control" id="jenis_dokumen" name="jenis_dokumen" required placeholder="Enter Jenis Dokumen">
+                <label for="dibuat_oleh" class="form-label">Dibuat Oleh</label>
+                <input type="text" class="form-control" name="dibuat_oleh" id="dibuat_oleh" required>
             </div>
             <div class="mb-3">
-                <label for="tanggal_unggah" class="form-label">Tanggal Unggah</label>
-                <input type="date" class="form-control" id="tanggal_unggah" name="tanggal_unggah" required>
+                <label for="gaji_sebelum" class="form-label">Gaji Sebelum</label>
+                <input type="text" class="form-control" name="gaji_sebelum" id="gaji_sebelum" readonly>
             </div>
             <div class="mb-3">
-                <label for="nama_file" class="form-label">Nama File</label>
-                <input type="text" class="form-control" id="nama_file" name="nama_file" required placeholder="Enter Nama File">
+                <label for="gaji_setelah" class="form-label">Gaji Setelah</label>
+                <input type="text" class="form-control" name="gaji_setelah" id="gaji_setelah" required>
             </div>
-            <div class="mb-3">
-                <label for="file_upload" class="form-label">Upload File</label>
-                <input type="file" class="form-control" id="file_upload" name="file_upload" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
         </form>
     </div>
 </main>
+
+<script>
+    document.getElementById('kontrak_id').addEventListener('change', function() {
+        let selectedOption = this.options[this.selectedIndex];
+        document.getElementById('gaji_sebelum').value = selectedOption.getAttribute('data-gaji');
+    });
+</script>
 
 <?php include '../template/footer.php'; ?>

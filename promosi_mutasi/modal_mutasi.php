@@ -98,9 +98,9 @@
                         <label for="edit_status_mutasi" class="form-label">Status Mutasi</label>
                         <select class="form-control" id="edit_status_mutasi" name="status_mutasi" required>
                             <option value="">Pilih Status</option>
-                            <option value="Pending">Setuju</option>
-                            <option value="Approved">Di Tolak</option>
-                            <option value="Rejected">Sedang Di Proses</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
                         </select>
                     </div>
                     <div class="modal-footer">

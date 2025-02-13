@@ -12,7 +12,7 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 $id = (int)$_GET['id']; // Konversi ke integer
 
 // Ambil data yang akan diedit
-$stmt = $conn->prepare("SELECT * FROM `dokumen pendukung` WHERE dokumen_peg = ?");
+$stmt = $conn->prepare("SELECT * FROM `dokumen_pendukung` WHERE id = ?");
 if (!$stmt) {
     die("<script>alert('Gagal mempersiapkan query: " . addslashes($conn->error) . "'); window.location.href='index.php';</script>");
 }
@@ -33,31 +33,26 @@ if (!$document) {
     <div class="container">
         <h1>Edit Dokumen Pendukung</h1>
         <form method="post" action="update_dokumen.php" enctype="multipart/form-data">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($document['dokumen_peg']) ?>">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($document['id']) ?>">
             
             <div class="mb-3">
-                <label for="dokumen_peg" class="form-label">Dokumen Pegawai</label>
-                <input type="text" class="form-control" id="dokumen_peg" name="dokumen_peg" value="<?= htmlspecialchars($document['dokumen_peg']) ?>" required>
+                <label for="kontrak_id" class="form-label">ID Kontrak</label>
+                <input type="text" class="form-control" id="kontrak_id" name="kontrak_id" value="<?= htmlspecialchars($document['kontrak_id']) ?>" required>
             </div>
             
             <div class="mb-3">
-                <label for="kontrak_peg" class="form-label">Kontrak Pegawai</label>
-                <input type="text" class="form-control" id="kontrak_peg" name="kontrak_peg" value="<?= htmlspecialchars($document['kontrak_peg']) ?>" required>
+                <label for="nama_dokumen" class="form-label">Nama Dokumen</label>
+                <input type="text" class="form-control" id="nama_dokumen" name="nama_dokumen" value="<?= htmlspecialchars($document['nama_dokumen']) ?>" required>
             </div>
             
             <div class="mb-3">
-                <label for="jenis_dokumen" class="form-label">Jenis Dokumen</label>
-                <input type="text" class="form-control" id="jenis_dokumen" name="jenis_dokumen" value="<?= htmlspecialchars($document['jenis_dokumen']) ?>" required>
+                <label for="tanggal_upload" class="form-label">Tanggal Upload</label>
+                <input type="datetime-local" class="form-control" id="tanggal_upload" name="tanggal_upload" value="<?= date('Y-m-d\TH:i', strtotime($document['tanggal_upload'])) ?>" required>
             </div>
             
             <div class="mb-3">
-                <label for="tanggal_unggah" class="form-label">Tanggal Unggah</label>
-                <input type="date" class="form-control" id="tanggal_unggah" name="tanggal_unggah" value="<?= htmlspecialchars($document['tanggal_unggah']) ?>" required>
-            </div>
-            
-            <div class="mb-3">
-                <label for="nama_file" class="form-label">Nama File</label>
-                <input type="text" class="form-control" id="nama_file" name="nama_file" value="<?= htmlspecialchars($document['nama_file']) ?>" required>
+                <label for="keterangan" class="form-label">Keterangan</label>
+                <textarea class="form-control" id="keterangan" name="keterangan" rows="3"><?= htmlspecialchars($document['keterangan']) ?></textarea>
             </div>
             
             <div class="mb-3">
@@ -69,9 +64,7 @@ if (!$document) {
             <div class="mb-3">
                 <label class="form-label">File Saat Ini</label>
                 <div>
-                    <a href="<?= htmlspecialchars($document['lokasi_file']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">
-                        Lihat File
-                    </a>
+                    <a href="<?= htmlspecialchars($document['file_path']) ?>" target="_blank" class="btn btn-sm btn-outline-primary">Lihat File</a>
                 </div>
             </div>
             

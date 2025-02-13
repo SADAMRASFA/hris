@@ -16,22 +16,17 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="<?php echo BASE_URL; ?>/hris/kedisiplinan/index.php">
+            <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="<?php echo BASE_URL; ?>/hris/pegawai dan kedisiplinan/index.php">
                 <i class="bi bi-award"></i><span>Kedisiplinan</span></i>
             </a>
         </li><!-- End Components Nav -->
 
+        
+       
         <li class="nav-item">
-            <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/recruitment/index.php">
-                <i class="bi bi-briefcase"></i><span>Recruitment</span>
-            </a>
-        </li><!-- End Recruitment Nav -->
-
-        <li class="nav-item">
-            <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/promosi_mutasi/promosi_mutasi.php">
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/promosi_mutasi/promosi_mutasi.php">
             <i class="bi bi-p-square-fill"></i><span>Manajemen promosi mutasi</span>
-        </li><!-- End  Nav -->
-
+        </a>
             <li class="nav-item">
             <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/penggajian/index.php">
                 <i class="bi bi-box-seam-fill"></i><span>Pelatihan</span>
@@ -52,7 +47,27 @@
             <i class="bi bi-cash-stack"></i><span>Manajemen Cuti</span>
             </a>   
         </li>
-        
+
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/kontrak_pegawai/index.php">
+            <i class="bi bi-briefcase"></i><span>Manajemen Kontrak Pegawai</span>
+        </a>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/analisis_sdm/index.php">
+            <i class="bi bi-briefcase"></i><span>Analis SDM</span>
+        </a>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/laporan_sdm/index.php">
+            <i class="bi bi-briefcase"></i><span>Laporan sdm</span>
+        </a>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/pengunduran_diri/index.php">
+            <i class="bi bi-briefcase"></i><span>Pengunduran diri</span>
+        </a>
+        <li class="nav-item">
+        <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/phk/index.php">
+            <i class="bi bi-briefcase"></i><span>PHK</span>
+        </a>
+
         <li class="nav-item">
         <a class="nav-link collapsed" href="<?php echo BASE_URL; ?>/hris/slip_gaji/index.php">
             <i class="bi bi-cash-stack"></i><span>Slip Gaji</span>

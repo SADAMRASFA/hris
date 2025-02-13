@@ -3,6 +3,10 @@ include '../template/header.php';
 include '../template/sidebar.php';
 include '../connection.php';
 
+// Tambahkan error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Fungsi untuk mendapatkan data dari tabel
 function getData($table) {
     global $conn;
@@ -19,181 +23,407 @@ $pelamar = getData('pelamar');
 $tahap_lamaran = getData('tahap_lamaran');
 $penilaian_pelamar = getData('penilaian_pelamar');
 ?>
-<main id="main" class="main">
-    <div class="container">
-        <h1 class="text-center my-4 page-title">Recruitment</h1>
-        <ul class="nav nav-tabs justify-content-center" id="recruitmentTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="lowongan-tab" data-bs-toggle="tab" href="#lowongan" role="tab" aria-controls="lowongan" aria-selected="true">Lowongan</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="departemen-tab" data-bs-toggle="tab" href="#departemen" role="tab" aria-controls="departemen" aria-selected="false">Departemen</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="jabatan-tab" data-bs-toggle="tab" href="#jabatan" role="tab" aria-controls="jabatan" aria-selected="false">Jabatan</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="pelamar-tab" data-bs-toggle="tab" href="#pelamar" role="tab" aria-controls="pelamar" aria-selected="false">Pelamar</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="tahap-lamaran-tab" data-bs-toggle="tab" href="#tahap-lamaran" role="tab" aria-controls="tahap-lamaran" aria-selected="false">Tahap Lamaran</a>
-            </li>
-            <li class="nav-item" role="presentation">
-                <a class="nav-link" id="penilaian-pelamar-tab" data-bs-toggle="tab" href="#penilaian-pelamar" role="tab" aria-controls="penilaian-pelamar" aria-selected="false">Penilaian Pelamar</a>
-            </li>
-        </ul>
-        <div class="tab-content mt-4" id="recruitmentTabContent">
-            <div class="tab-pane fade show active" id="lowongan" role="tabpanel" aria-labelledby="lowongan-tab">
-                <h2 class="section-title">Lowongan</h2>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Lowongan</th>
-                            <th>Deskripsi</th>
-                            <th>ID Jabatan</th>
-                            <th>Tanggal Posting</th>
-                            <th>Tanggal Tutup</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($lowongan as $row): ?>
-                            <tr>
-                                <td><?= $row['id_lowongan'] ?></td>
-                                <td><?= $row['nama_lowongan'] ?></td>
-                                <td><?= $row['deskripsi_lowongan'] ?></td>
-                                <td><?= $row['id_jabatan'] ?></td>
-                                <td><?= $row['tgl_posting'] ?></td>
-                                <td><?= $row['tgl_tutup'] ?></td>
-                                <td><?= $row['status'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="departemen" role="tabpanel" aria-labelledby="departemen-tab">
-                <h2 class="section-title">Departemen</h2>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Departemen</th>
-                            <th>Kepala Departemen</th>
-                            <th>Lokasi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($departemen as $row): ?>
-                            <tr>
-                                <td><?= $row['id_departemen'] ?></td>
-                                <td><?= $row['nama_departemen'] ?></td>
-                                <td><?= $row['kepala_departemen'] ?></td>
-                                <td><?= $row['lokasi_departemen'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="jabatan" role="tabpanel" aria-labelledby="jabatan-tab">
-                <h2 class="section-title">Jabatan</h2>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Jabatan</th>
-                            <th>Deskripsi</th>
-                            <th>Status</th>
-                            <th>ID Departemen</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($jabatan as $row): ?>
-                            <tr>
-                                <td><?= $row['id_jabatan'] ?></td>
-                                <td><?= $row['nama_jabatan'] ?></td>
-                                <td><?= $row['desk_jabatan'] ?></td>
-                                <td><?= $row['status_jabatan'] ?></td>
-                                <td><?= $row['id_departemen'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="pelamar" role="tabpanel" aria-labelledby="pelamar-tab">
-                <h2 class="section-title">Pelamar</h2>
-                <form method="post" action="submit_pelamar.php">
-                    <div class="mb-3">
-                        <label for="id_pelamar" class="form-label">ID Pelamar</label>
-                        <input type="text" class="form-control" id="id_pelamar" name="id_pelamar" required>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Recruitment</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0099ff 100%);
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.2rem;
+        }
+        .btn-add {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .table {
+            vertical-align: middle;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .action-buttons .btn {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .action-buttons .btn:hover {
+            transform: translateY(-2px);
+        }
+        .btn-detail {
+            background-color: #17a2b8;
+            border: none;
+        }
+        .btn-edit {
+            background-color: #ffc107;
+            border: none;
+        }
+        .btn-delete {
+            background-color: #dc3545;
+            border: none;
+        }
+        .table-hover tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: all 0.2s;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: #6c757d;
+        }
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            margin: 0 2px;
+            border-radius: 5px;
+        }
+        .search-box {
+            border-radius: 20px;
+            padding: 8px 15px;
+            border: 1px solid #ced4da;
+            transition: all 0.3s;
+        }
+        .search-box:focus {
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+            border-color: #0d6efd;
+        }
+        .content-wrapper {
+            margin-left: 260px;
+            margin-top: 70px;
+            padding: 15px 25px;
+            transition: margin-left .3s ease-in-out;
+        }
+        
+        .container-fluid {
+            padding-left: 20px;
+            padding-right: 20px;
+            max-width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .content-wrapper {
+                margin-left: 0;
+                padding: 15px;
+            }
+            .container-fluid {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+        }
+        
+        .card {
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .table-responsive::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div class="container-fluid">
+            <h1 class="text-center my-4 page-title">Recruitment</h1>
+            <ul class="nav nav-tabs justify-content-center" id="recruitmentTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="lowongan-tab" data-bs-toggle="tab" href="#lowongan" role="tab" aria-controls="lowongan" aria-selected="true">Lowongan</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="departemen-tab" data-bs-toggle="tab" href="#departemen" role="tab" aria-controls="departemen" aria-selected="false">Departemen</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="jabatan-tab" data-bs-toggle="tab" href="#jabatan" role="tab" aria-controls="jabatan" aria-selected="false">Jabatan</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="pelamar-tab" data-bs-toggle="tab" href="#pelamar" role="tab" aria-controls="pelamar" aria-selected="false">Pelamar</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tahap-lamaran-tab" data-bs-toggle="tab" href="#tahap-lamaran" role="tab" aria-controls="tahap-lamaran" aria-selected="false">Tahap Lamaran</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="penilaian-pelamar-tab" data-bs-toggle="tab" href="#penilaian-pelamar" role="tab" aria-controls="penilaian-pelamar" aria-selected="false">Penilaian Pelamar</a>
+                </li>
+            </ul>
+            <div class="tab-content mt-4" id="recruitmentTabContent">
+                <div class="tab-pane fade show active" id="lowongan" role="tabpanel" aria-labelledby="lowongan-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h4 class="text-white mb-0">
+                                        <i class="fas fa-chalkboard-teacher me-2"></i>Data Lowongan
+                                    </h4>
+                                    <small class="text-white-50"></small>
+                                </div>
+                                <a href="tambah_lowongan.php" class="btn btn-add text-white">
+                                    <i class="fas fa-plus-circle me-2"></i>Tambah Lowongan
+                                </a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabelRecruitment">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama Lowongan</th>
+                                            <th>Deskripsi</th>
+                                            <th>ID Jabatan</th>
+                                            <th>Tanggal Posting</th>
+                                            <th>Tanggal Tutup</th>
+                                            <th>Status Lowongan</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($lowongan as $row): ?>
+                                            <tr>
+                                                <td><?= $row['id_lowongan'] ?></td>
+                                                <td><?= htmlspecialchars($row['nama_lowongan']) ?></td>
+                                                <td><?= htmlspecialchars($row['deskripsi_lowongan']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_jabatan']) ?></td>
+                                                <td><?= date('d/m/Y', strtotime($row['tgl_posting'])) ?></td>
+                                                <td><?= date('d/m/Y', strtotime($row['tgl_tutup'])) ?></td>
+                                                <td>
+                                                    <span class="badge <?php 
+                                                        echo match($row['status_lowongan']) {
+                                                            'Open' => 'bg-success',
+                                                            'Closed' => 'bg-danger',
+                                                            default => 'bg-secondary'
+                                                        };
+                                                    ?>">
+                                                        <?= htmlspecialchars($row['status_lowongan']) ?>
+                                                    </span>
+                                                </td>
+                                                
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="nama_pel" class="form-label">Nama Pelamar</label>
-                        <input type="text" class="form-control" id="nama_pel" name="nama_pel" required>
+                </div>
+                <div class="tab-pane fade" id="departemen" role="tabpanel" aria-labelledby="departemen-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-white mb-0">Data Departemen</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabelDepartemen">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama Departemen</th>
+                                            <th>Kepala Departemen</th>
+                                            <th>Lokasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($departemen as $row): ?>
+                                            <tr>
+                                                <td><?= $row['id_departemen'] ?></td>
+                                                <td><?= htmlspecialchars($row['nama_departemen']) ?></td>
+                                                <td><?= htmlspecialchars($row['kepala_departemen']) ?></td>
+                                                <td><?= htmlspecialchars($row['lokasi_departemen']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="email_pel" class="form-label">Email Pelamar</label>
-                        <input type="email" class="form-control" id="email_pel" name="email_pel" required>
+                </div>
+                <div class="tab-pane fade" id="jabatan" role="tabpanel" aria-labelledby="jabatan-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-white mb-0">Data Jabatan</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabelJabatan">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama Jabatan</th>
+                                            <th>Deskripsi</th>
+                                            <th>Status</th>
+                                            <th>ID Departemen</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($jabatan as $row): ?>
+                                            <tr>
+                                                <td><?= $row['id_jabatan'] ?></td>
+                                                <td><?= htmlspecialchars($row['nama_jabatan']) ?></td>
+                                                <td><?= htmlspecialchars($row['desk_jabatan']) ?></td>
+                                                <td><?= htmlspecialchars($row['status_jabatan']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_departemen']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="id_lowongan" class="form-label">ID Lowongan</label>
-                        <input type="text" class="form-control" id="id_lowongan" name="id_lowongan" required>
+                </div>
+                <div class="tab-pane fade" id="pelamar" role="tabpanel" aria-labelledby="pelamar-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-white mb-0">Data Pelamar</h4>
+                        </div>
+                        <div class="card-body">
+                            <form method="post" action="submit_pelamar.php">
+                                <div class="mb-3">
+                                    <label for="id_pelamar" class="form-label">ID Pelamar</label>
+                                    <input type="text" class="form-control" id="id_pelamar" name="id_pelamar" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nama_pel" class="form-label">Nama Pelamar</label>
+                                    <input type="text" class="form-control" id="nama_pel" name="nama_pel" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email_pel" class="form-label">Email Pelamar</label>
+                                    <input type="email" class="form-control" id="email_pel" name="email_pel" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="id_lowongan" class="form-label">ID Lowongan</label>
+                                    <input type="text" class="form-control" id="id_lowongan" name="id_lowongan" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="jabatan_dipilih" class="form-label">Jabatan Dipilih</label>
+                                    <input type="text" class="form-control" id="jabatan_dipilih" name="jabatan_dipilih" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary submit-button">Submit</button>
+                            </form>
+                            <div class="table-responsive mt-3">
+                                <table class="table table-hover" id="tabelPelamar">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>ID Lowongan</th>
+                                            <th>Status</th>
+                                            <th>Jabatan Dipilih</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($pelamar as $row): ?>
+                                            <tr>
+                                                <td><?= $row['id_pelamar'] ?></td>
+                                                <td><?= htmlspecialchars($row['nama_pel']) ?></td>
+                                                <td><?= htmlspecialchars($row['email_pel']) ?></td>
+                                                <td><?= htmlspecialchars($row['id_lowongan']) ?></td>
+                                                <td><?= htmlspecialchars($row['status_pel']) ?></td>
+                                                <td><?= htmlspecialchars($row['jabatan_dipilih']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="jabatan_dipilih" class="form-label">Jabatan Dipilih</label>
-                        <input type="text" class="form-control" id="jabatan_dipilih" name="jabatan_dipilih" required>
+                </div>
+                <div class="tab-pane fade" id="tahap-lamaran" role="tabpanel" aria-labelledby="tahap-lamaran-tab">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="text-white mb-0">Data Tahap Lamaran</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover" id="tabelTahapLamaran">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Nama Tahap</th>
+                                            <th>Deskripsi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($tahap_lamaran as $row): ?>
+                                            <tr>
+                                                <td><?= $row['id_tahap'] ?></td>
+                                                <td><?= htmlspecialchars($row['nama_tahap']) ?></td>
+                                                <td><?= htmlspecialchars($row['deskripsi_tahap']) ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
-                    <button type="submit" class="btn btn-primary submit-button">Submit</button>
-                </form>
-                <table class="table mt-3 table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama</th>
-                            <th>Email</th>
-                            <th>ID Lowongan</th>
-                            <th>Status</th>
-                            <th>Jabatan Dipilih</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($pelamar as $row): ?>
-                            <tr>
-                                <td><?= $row['id_pelamar'] ?></td>
-                                <td><?= $row['nama_pel'] ?></td>
-                                <td><?= $row['email_pel'] ?></td>
-                                <td><?= $row['id_lowongan'] ?></td>
-                                <td><?= $row['status_pel'] ?></td>
-                                <td><?= $row['jabatan_dipilih'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="tahap-lamaran" role="tabpanel" aria-labelledby="tahap-lamaran-tab">
-                <h2 class="section-title">Tahap Lamaran</h2>
-                <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nama Tahap</th>
-                            <th>Deskripsi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($tahap_lamaran as $row): ?>
-                            <tr>
-                                <td><?= $row['id_tahap'] ?></td>
-                                <td><?= $row['nama_tahap'] ?></td>
-                                <td><?= $row['deskripsi_tahap'] ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-            <div class="tab-pane fade" id="penilaian-pelamar" role="tabpanel" aria-labelledby="penilaian-pelamar-tab">
-                <h2 class="section-title">Penilaian Pelamar</h2>
-                <table class="table table-striped table-hover">
+                </div>
+                <div class="tab-pane fade" id="penilaian-pelamar" role="tabpanel" aria-labelledby="penilaian-pelamar-tab">
+    <div class="card">
+        <div class="card-header">
+            <h4 class="text-white mb-0">Data Penilaian Pelamar</h4>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover" id="tabelPenilaianPelamar">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -208,11 +438,11 @@ $penilaian_pelamar = getData('penilaian_pelamar');
                         <?php foreach ($penilaian_pelamar as $row): ?>
                             <tr>
                                 <td><?= $row['id_penilaian_pel'] ?></td>
-                                <td><?= $row['id_pelamar'] ?></td>
-                                <td><?= $row['id_tahap'] ?></td>
-                                <td><?= $row['tgl_dinilai'] ?></td>
-                                <td><?= $row['skor'] ?></td>
-                                <td><?= $row['catatan'] ?></td>
+                                <td><?= htmlspecialchars($row['id_pelamar']) ?></td>
+                                <td><?= htmlspecialchars($row['id_tahap']) ?></td>
+                                <td><?= date('d/m/Y', strtotime($row['tgl_dinilai'])) ?></td>
+                                <td><?= htmlspecialchars($row['skor']) ?></td>
+                                <td><?= htmlspecialchars($row['catatan']) ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -220,144 +450,124 @@ $penilaian_pelamar = getData('penilaian_pelamar');
             </div>
         </div>
     </div>
-</main>
+</div>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <script>
+    $(document).ready(function() {
+        $('#tabelRecruitment').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
+        });
 
-<style>
-    body {
-        background-color:rgb(251, 251, 251);
-        color: #1e90ff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        animation: fadeIn 1s ease-in-out;
-    }
-    .page-title, .welcome-title {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #1e90ff;
-        animation: fadeInDown 1s ease-in-out;
-    }
-    .section-title, .welcome-text {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #1e90ff;
-        animation: fadeInUp 1s ease-in-out;
-    }
-    .nav-tabs .nav-link {
-        border: 1px solid #1e90ff;
-        border-radius: 0.25rem;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        color: #1e90ff;
-        transition: background-color 0.3s ease, color 0.3s ease;
-        animation: fadeIn 1s ease-in-out;
-    }
-    .nav-tabs .nav-link.active {
-        background-color: #1e90ff;
-        color: white;
-    }
-    .nav-tabs .nav-link:hover {
-        background-color: #1e90ff;
-        color: #1e90ff;
-    }
-    .card {
-        background-color: #1e2127;
-        border: 3px solid #1e90ff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        font-weight: 700;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding: 30px 20px;
-        color: #1e90ff;
-        border-radius: 45px;
-        margin-top: 20px;
-        animation: fadeIn 1s ease-in-out;
-    }
-    .App-logo {
-        pointer-events: none;
-        margin-top: -10px;
-        animation: App-logo-spin infinite 5s linear;
-    }
-    .App-button {
-        padding: 10px 20px;
-        background-color: transparent;
-        color: #1e90ff;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        font-size: 15px;
-        border: 3px solid #1e90ff;
-        border-radius: 5em;
-        margin-top: 20px;
-        transition: 0.1s;
-        text-decoration: none;
-        text-align: center;
-        animation: fadeIn 1s ease-in-out;
-    }
-    .App-button:hover {
-        color: #1e2127;
-        background-color: #1e90ff;
-    }
-    .table {
-        animation: fadeIn 1.5s ease-in-out;
-    }
-    .form-label, .form-control, .submit-button {
-        animation: fadeIn 1.5s ease-in-out;
-    }
-    .submit-button {
-        background-color: #1e90ff;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
-    .submit-button:hover {
-        background-color: #1e90ff;
-        color: #1e2127;
-    }
-    @media (prefers-reduced-motion: no-preference) {
-        .App-logo {
-            animation: App-logo-spin infinite 5s linear;
-        }
-    }
-    @keyframes App-logo-spin {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-    @keyframes fadeIn {
-        0% { opacity: 0; }
-        100% { opacity: 1; }
-    }
-    @keyframes fadeInDown {
-        0% { opacity: 0; transform: translateY(-20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes fadeInUp {
-        0% { opacity: 0; transform: translateY(20px); }
-        100% { opacity: 1; transform: translateY(0); }
-    }
-</style>
+        $('#tabelDepartemen').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
+        });
 
-<style>
-    .tab-pane {
-        transition: all 0.5s ease;
-    }
-</style>
+        $('#tabelJabatan').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
+        });
 
-<script>
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function() {
-            const target = document.querySelector(this.getAttribute('href'));
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                pane.classList.remove('show', 'active');
-            });
-            target.classList.add('show', 'active');
+        $('#tabelPelamar').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
+        });
+
+        $('#tabelTahapLamaran').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
+        });
+
+        $('#tabelPenilaianPelamar').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.11.5/i18n/id.json'
+            },
+            pageLength: 10,
+            ordering: true,
+            responsive: true,
+            dom: '<"d-flex justify-content-between align-items-center mb-3"lf>rt<"d-flex justify-content-between align-items-center mt-3"ip>',
+            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "Semua"]]
         });
     });
-</script>
-<?php
-include '../template/footer.php';
-?>
+
+    function konfirmasiHapus(id) {
+        Swal.fire({
+            title: 'Konfirmasi Hapus',
+            text: "Apakah Anda yakin ingin menghapus data ini?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#dc3545',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Hapus!',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'hapus_lowongan.php?id=' + id;
+            }
+        });
+    }
+
+    function filterTable() {
+        const input = document.getElementById('searchInput');
+        const filter = input.value.toLowerCase();
+        const tables = document.querySelectorAll('.tab-pane table');
+
+        tables.forEach(table => {
+            const tr = table.getElementsByTagName('tr');
+            for (let i = 1; i < tr.length; i++) { // Mulai dari 1 untuk melewati header
+                const tds = tr[i].getElementsByTagName('td');
+                let match = false;
+                for (let j = 0; j < tds.length; j++) {
+                    if (tds[j].innerText.toLowerCase().indexOf(filter) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                tr[i].style.display = match ? '' : 'none';
+            }
+        });
+    }
+    </script>
+</body>
+</html>

@@ -4,32 +4,25 @@ include '../template/sidebar.php';
 include '../connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ambil data form
-    $dokumen_peg = $_POST['dokumen_peg']; // Teks, bukan angka
-    $kontrak_peg = $_POST['kontrak_peg']; // Teks, bukan angka
-    $jenis_dokumen = $_POST['jenis_dokumen']; // Teks, bukan angka
-    $tanggal_unggah = $_POST['tanggal_unggah'];
-    $nama_file = $_POST['nama_file'];
+    // Ambil data dari form
+    $kontrak_id = $_POST['kontrak_id'];
+    $nama_dokumen = $_POST['nama_dokumen'];
+    $keterangan = $_POST['keterangan'];
 
-    // Cek apakah dokumen_peg sudah ada di database
-    $stmt = $conn->prepare("SELECT dokumen_peg FROM `dokumen pendukung` WHERE dokumen_peg = ?");
-    if (!$stmt) {
-        die("<script>alert('Gagal mempersiapkan query: " . addslashes($conn->error) . "'); history.back();</script>");
+    // Validasi apakah kontrak_id ada di tabel kontrak_pegawai
+    $check_stmt = $conn->prepare("SELECT id FROM kontrak_pegawai WHERE id = ?");
+    $check_stmt->bind_param("i", $kontrak_id);
+    $check_stmt->execute();
+    $result = $check_stmt->get_result();
+
+    if ($result->num_rows === 0) {
+        die("<script>alert('Error: Kontrak ID tidak ditemukan!'); history.back();</script>");
     }
+    $check_stmt->close();
 
-    $stmt->bind_param("s", $dokumen_peg);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        echo "<script>alert('Dokumen dengan ID tersebut sudah ada!'); history.back();</script>";
-        exit;
-    }
-    $stmt->close();
-
-    // Validasi dan upload file
+    // Proses upload file
     $uploadDir = 'uploads/';
-    $fileName = uniqid() . '_' . basename($_FILES['file_upload']['name']); // Buat nama file unik
+    $fileName = uniqid() . '_' . basename($_FILES['file_upload']['name']);
     $filePath = $uploadDir . $fileName;
     $fileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
 
@@ -47,22 +40,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Upload file
     if (move_uploaded_file($_FILES['file_upload']['tmp_name'], $filePath)) {
         // Simpan ke database
-        $stmt = $conn->prepare("INSERT INTO `dokumen pendukung` 
-            (dokumen_peg, kontrak_peg, jenis_dokumen, tanggal_unggah, nama_file, lokasi_file) 
-            VALUES (?, ?, ?, ?, ?, ?)");
-        
+        $stmt = $conn->prepare("INSERT INTO dokumen_pendukung (kontrak_id, nama_dokumen, file_path, keterangan) VALUES (?, ?, ?, ?)");
+
         if ($stmt) {
-            $stmt->bind_param("ssssss", $dokumen_peg, $kontrak_peg, $jenis_dokumen, $tanggal_unggah, $nama_file, $filePath);
+            $stmt->bind_param("isss", $kontrak_id, $nama_dokumen, $filePath, $keterangan);
             
             if ($stmt->execute()) {
                 echo "<script>alert('Dokumen berhasil disimpan!'); window.location.href='index.php';</script>";
             } else {
-                unlink($filePath); // Hapus file jika gagal simpan ke database
+                unlink($filePath);
                 echo "<script>alert('Gagal menyimpan data: " . addslashes($stmt->error) . "'); history.back();</script>";
             }
             $stmt->close();
         } else {
-            unlink($filePath); // Hapus file jika gagal prepare statement
+            unlink($filePath);
             echo "<script>alert('Gagal mempersiapkan query: " . addslashes($conn->error) . "'); history.back();</script>";
         }
     } else {
@@ -76,24 +67,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <h1>Tambah Dokumen Pendukung</h1>
         <form method="post" action="" enctype="multipart/form-data">
             <div class="mb-3">
-                <label for="dokumen_peg" class="form-label">Dokumen Pegawai</label>
-                <input type="text" class="form-control" id="dokumen_peg" name="dokumen_peg" required placeholder="Masukkan Nama Dokumen Pegawai">
+                <label for="kontrak_id" class="form-label">Kontrak ID</label>
+                <input type="number" class="form-control" id="kontrak_id" name="kontrak_id" required>
             </div>
             <div class="mb-3">
-                <label for="kontrak_peg" class="form-label">Kontrak Pegawai</label>
-                <input type="text" class="form-control" id="kontrak_peg" name="kontrak_peg" required placeholder="Masukkan Keterangan Dokumen">
+                <label for="nama_dokumen" class="form-label">Nama Dokumen</label>
+                <input type="text" class="form-control" id="nama_dokumen" name="nama_dokumen" required>
             </div>
             <div class="mb-3">
-                <label for="jenis_dokumen" class="form-label">Jenis Dokumen</label>
-                <input type="text" class="form-control" id="jenis_dokumen" name="jenis_dokumen" required placeholder="Masukkan Jenis Dokumen">
-            </div>
-            <div class="mb-3">
-                <label for="tanggal_unggah" class="form-label">Tanggal Unggah</label>
-                <input type="date" class="form-control" id="tanggal_unggah" name="tanggal_unggah" required>
-            </div>
-            <div class="mb-3">
-                <label for="nama_file" class="form-label">Nama File</label>
-                <input type="text" class="form-control" id="nama_file" name="nama_file" required placeholder="Masukkan Nama File">
+                <label for="keterangan" class="form-label">Keterangan</label>
+                <textarea class="form-control" id="keterangan" name="keterangan"></textarea>
             </div>
             <div class="mb-3">
                 <label for="file_upload" class="form-label">Upload File</label>
